@@ -5,7 +5,6 @@ import numpy as np
 from sklearn.metrics import (
     accuracy_score,
     classification_report,
-    confusion_matrix,
     f1_score,
     log_loss,
     precision_score,
@@ -56,10 +55,8 @@ def evaluate_model(
             metrics["roc_auc"] = roc_auc_score(y_test, y_proba)
             metrics["log_loss"] = log_loss(y_test, y_proba)
 
-        cm = confusion_matrix(y_test, y_pred)
-
         logger.info("Evaluation completed.")
-        return metrics, cm
+        return metrics, y_pred, y_proba
 
     except Exception as e:
         logger.exception("Model evaluation failed.")

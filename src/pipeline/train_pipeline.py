@@ -2,7 +2,12 @@ import logging
 
 from src.artifacts import save_artifacts
 from src.data import load_data, normalize_column_names
-from src.evaluation import evaluate_model
+from src.evaluation import (
+    evaluate_model,
+    plot_confusion_matrix,
+    plot_precision_recall_curve,
+    plot_roc_curve,
+)
 from src.explainer import explain_model
 from src.features import preprocess_data
 from src.models import create_model, train_model
@@ -37,7 +42,10 @@ def run_training_pipeline(cfg) -> None:
         model = train_model(model, X_train, y_train)
 
         # Evaluate
-        metrics, cm = evaluate_model(model, X_test, y_test)
+        metrics, y_pred, y_proba = evaluate_model(model, X_test, y_test)
+        plot_confusion_matrix(y_test, y_pred)
+        plot_precision_recall_curve(y_test, y_proba)
+        plot_roc_curve(y_test, y_proba)
 
         # Explainer
         explain_model(model, X_train)
@@ -62,7 +70,6 @@ def run_training_pipeline(cfg) -> None:
             scaler=scaler,
             train_data=train_data_snapshot,
             metrics=metrics,
-            confusion_matrix=cm,
         )
 
         logger.info("Training pipeline completed.")

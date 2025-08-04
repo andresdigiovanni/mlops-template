@@ -1,1 +1,4 @@
+from .confusion_matrix_figure import plot_confusion_matrix
 from .evaluate import evaluate_model
+from .precision_recall_figure import plot_precision_recall_curve
+from .roc_auc_figure import plot_roc_curve

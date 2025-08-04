@@ -23,7 +23,7 @@ def explain_model(model: Any, X: pd.DataFrame, base_path: str = "artifacts"):
         plt.savefig(run_path / "shap_summary.png")
         plt.close(fig)
 
-        print("Generated SHAP explainer.")
+        logger.info("Generated SHAP explainer.")
 
     except Exception as e:
         logger.exception("SHAP explainer failed.")

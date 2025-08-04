@@ -1,13 +1,10 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import joblib
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import seaborn as sns
 
 logger = logging.getLogger()
 
@@ -18,7 +15,6 @@ def save_artifacts(
     scaler: Any,
     train_data: pd.DataFrame,
     metrics: Dict[str, Any],
-    confusion_matrix: Optional[np.ndarray] = None,
     base_path: str = "artifacts",
 ) -> Path:
     """
@@ -29,7 +25,6 @@ def save_artifacts(
         params: Model parameters.
         scaler: Fitted scaler instance.
         metrics (dict): Evaluation metrics.
-        confusion_matrix (np.ndarray, optional): Confusion matrix to save as heatmap.
         base_path (str): Base directory for saving artifacts.
 
     Returns:
@@ -59,20 +54,6 @@ def save_artifacts(
         with open(run_path / "metrics.json", "w") as f:
             json.dump(metrics, f, indent=4)
         logger.info(f"Metrics saved to {run_path / 'metrics.json'}")
-
-        # Save confusion matrix plot if provided
-        if confusion_matrix is not None:
-            plt.figure(figsize=(6, 5))
-            sns.heatmap(confusion_matrix, annot=True, fmt="d", cmap="Blues", cbar=False)
-            plt.title("Confusion Matrix")
-            plt.xlabel("Predicted")
-            plt.ylabel("Actual")
-            plt.tight_layout()
-            plt.savefig(run_path / "confusion_matrix.png")
-            plt.close()
-            logger.info(
-                f"Confusion matrix plot saved to {run_path / 'confusion_matrix.png'}"
-            )
 
         return run_path
 
