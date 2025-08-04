@@ -3,6 +3,7 @@ import logging
 from src.artifacts import save_artifacts
 from src.data import load_data, normalize_column_names
 from src.evaluation import evaluate_model
+from src.explainer import explain_model
 from src.features import preprocess_data
 from src.models import create_model, train_model
 
@@ -34,6 +35,9 @@ def run_training_pipeline(cfg) -> None:
 
         # Evaluate
         metrics, cm = evaluate_model(model, X_test, y_test)
+
+        # Explainer
+        explain_model(model, X_train)
 
         # Training data
         y_pred_train = model.predict(X_train)
