@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: cancer-predict-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./.artifacts:/app/.artifacts
+      - ./.drift_reports:/app/.drift_reports
+    restart: unless-stopped
+
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    container_name: cancer-predict-ui
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+    volumes:
+      - ./.drift_reports:/app/.drift_reports
+    restart: unless-stopped

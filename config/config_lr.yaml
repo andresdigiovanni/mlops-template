@@ -1,0 +1,13 @@
+artifacts:
+  path: .artifacts
+
+data:
+  test_size: 0.2
+  random_state: 42
+
+drift:
+  buffer_size: 5
+  path: .drift_reports
+
+model:
+  type: "lr"
