@@ -1,9 +1,13 @@
-from pathlib import Path
-from time import sleep
+import hydra
+from omegaconf import DictConfig
 
 from src.pipeline import run_training_pipeline
 
+
+@hydra.main(config_path="../../config", config_name="config")
+def main(cfg: DictConfig):
+    run_training_pipeline(cfg)
+
+
 if __name__ == "__main__":
-    config_file = "config_lr.yaml"
-    config_path = Path("config") / config_file
-    run_training_pipeline(config_path)
+    main()

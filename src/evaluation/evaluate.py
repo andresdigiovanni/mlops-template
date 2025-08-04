@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Dict, Tuple
 
 import numpy as np
@@ -12,9 +13,7 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
-from src.utils.logger import get_logger
-
-logger = get_logger()
+logger = logging.getLogger()
 
 
 def evaluate_model(

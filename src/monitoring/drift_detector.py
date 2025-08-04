@@ -1,12 +1,11 @@
+import logging
 from pathlib import Path
 
 import pandas as pd
 from evidently import Report
 from evidently.presets import DataDriftPreset
 
-from src.utils import get_logger
-
-logger = get_logger()
+logger = logging.getLogger()
 
 
 class DriftDetector:

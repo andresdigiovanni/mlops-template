@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Tuple
 
@@ -6,9 +7,7 @@ import pandas as pd
 from sklearn.base import BaseEstimator
 from sklearn.preprocessing import StandardScaler
 
-from src.utils import get_logger
-
-logger = get_logger()
+logger = logging.getLogger()
 
 
 def load_artifacts(artifacts_path: str) -> Tuple[BaseEstimator, StandardScaler]:

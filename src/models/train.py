@@ -1,8 +1,7 @@
+import logging
 from typing import Any
 
-from src.utils.logger import get_logger
-
-logger = get_logger()
+logger = logging.getLogger()
 
 
 def train_model(model: Any, X_train, y_train) -> Any:

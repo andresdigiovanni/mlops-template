@@ -1,11 +1,10 @@
+import logging
 from typing import Tuple
 
 import pandas as pd
 from sklearn.datasets import load_breast_cancer
 
-from src.utils.logger import get_logger
-
-logger = get_logger()
+logger = logging.getLogger()
 
 
 def load_data() -> Tuple[pd.DataFrame, pd.Series]:

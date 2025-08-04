@@ -10,6 +10,5 @@ wheels/
 .venv
 
 # Artifacts and logs
-.artifacts/
 .drift_reports/
-.logs/
+outputs/

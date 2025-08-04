@@ -22,7 +22,6 @@ This project provides a complete pipeline for predicting breast cancer using a t
 │   ├── monitoring/           # Drift detection logic
 │   ├── pipeline/             # Orchestration of the training/inference flows
 │   ├── schemas/              # Request and response schemas
-│   └── utils/                # Logger, config loader, and utilities
 ├── tests/                    # Unit tests
 ├── Dockerfile.api            # Dockerfile for FastAPI service
 ├── Dockerfile.ui             # Dockerfile for Streamlit UI

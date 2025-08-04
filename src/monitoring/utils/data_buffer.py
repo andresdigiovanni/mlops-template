@@ -1,5 +1,4 @@
 from pathlib import Path
-from threading import Lock
 from typing import Optional
 
 import pandas as pd

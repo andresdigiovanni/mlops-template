@@ -22,6 +22,6 @@ def test_get_lightgbm_default():
     assert isinstance(model, lgb.LGBMClassifier)
 
 
-def test_load_config_file_not_found():
+def test_model_not_found():
     with pytest.raises(RuntimeError):
         create_model("unsupported_model_type")

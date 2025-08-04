@@ -1,15 +1,16 @@
+import logging
 from typing import List
 
 import pandas as pd
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from hydra import compose
 
 from src.artifacts import load_artifacts
 from src.monitoring import DriftDetector, DriftState
 from src.pipeline import run_inference_pipeline
 from src.schemas import PredictionRequest, PredictionResponse
-from src.utils import get_logger, load_config
 
 app = FastAPI(title="Breast Cancer Classifier API")
 
@@ -22,16 +23,14 @@ app.add_middleware(
 )
 
 LABELS = {0: "malignant", 1: "benign"}
-logger = get_logger()
-config = load_config()
+logger = logging.getLogger()
+cfg = compose(config_path="../../config", config_name="config")
 
-model, scaler, train_data = load_artifacts(config["artifacts"]["path"])
+model, scaler, train_data = load_artifacts(cfg["artifacts"]["path"])
 training_data = train_data.drop(columns=["target", "pred", "proba"])
 training_preds = train_data[["proba"]]
 
-drift_state = DriftState(
-    config["drift"]["path"], buffer_size=config["drift"]["buffer_size"]
-)
+drift_state = DriftState(cfg["drift"]["path"], buffer_size=cfg["drift"]["buffer_size"])
 drift_detector = DriftDetector(training_data, training_preds)
 
 
@@ -46,7 +45,7 @@ def predict(inputs: List[PredictionRequest]) -> List[PredictionResponse]:
             input_df,
             drift_detector,
             drift_state,
-            config["drift"]["path"],
+            cfg["drift"]["path"],
         )
 
         responses = []

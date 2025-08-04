@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -8,11 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import yaml
 
-from src.utils.logger import get_logger
-
-logger = get_logger()
+logger = logging.getLogger()
 
 
 def save_artifacts(
@@ -20,18 +17,16 @@ def save_artifacts(
     scaler: Any,
     train_data: pd.DataFrame,
     metrics: Dict[str, Any],
-    config: Dict[str, Any],
     confusion_matrix: Optional[np.ndarray] = None,
-    base_path: str = ".artifacts",
+    base_path: str = "artifacts",
 ) -> Path:
     """
-    Saves model, scaler, metrics, config, and confusion matrix to a timestamped artifact directory.
+    Saves model, scaler, metrics, and confusion matrix to a timestamped artifact directory.
 
     Args:
         model: Trained model instance.
         scaler: Fitted scaler instance.
         metrics (dict): Evaluation metrics.
-        config (dict): Configuration used for the run.
         confusion_matrix (np.ndarray, optional): Confusion matrix to save as heatmap.
         base_path (str): Base directory for saving artifacts.
 
@@ -39,8 +34,7 @@ def save_artifacts(
         Path: Path to the created artifact directory.
     """
     try:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        run_path = Path(base_path) / f"run_{timestamp}"
+        run_path = Path(base_path)
         run_path.mkdir(parents=True, exist_ok=True)
 
         # Save model
@@ -58,11 +52,6 @@ def save_artifacts(
         with open(run_path / "metrics.json", "w") as f:
             json.dump(metrics, f, indent=4)
         logger.info(f"Metrics saved to {run_path / 'metrics.json'}")
-
-        # Save config
-        with open(run_path / "config_used.yaml", "w") as f:
-            yaml.dump(config, f)
-        logger.info(f"Configuration saved to {run_path / 'config_used.yaml'}")
 
         # Save confusion matrix plot if provided
         if confusion_matrix is not None:

@@ -1,11 +1,10 @@
+import logging
 from typing import Any, Dict, Literal, Optional
 
 import lightgbm as lgb
 from sklearn.linear_model import LogisticRegression
 
-from src.utils.logger import get_logger
-
-logger = get_logger()
+logger = logging.getLogger()
 
 ModelType = Literal["lr", "lightgbm"]
 

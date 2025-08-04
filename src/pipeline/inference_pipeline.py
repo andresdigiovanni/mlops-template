@@ -1,3 +1,4 @@
+import logging
 from threading import Thread
 
 import numpy as np
@@ -6,9 +7,8 @@ from sklearn.base import BaseEstimator
 from sklearn.preprocessing import StandardScaler
 
 from src.monitoring import DriftDetector, DriftState
-from src.utils import get_logger
 
-logger = get_logger()
+logger = logging.getLogger()
 
 
 def run_inference_pipeline(

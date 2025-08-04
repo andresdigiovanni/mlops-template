@@ -1,43 +1,41 @@
+import logging
+
 from src.artifacts import save_artifacts
 from src.data import load_data, normalize_column_names
 from src.evaluation import evaluate_model
 from src.features import preprocess_data
 from src.models import create_model, train_model
-from src.utils import get_logger, load_config
 
 
-def run_training_pipeline(config_path: str = "config.yaml") -> None:
-    logger = get_logger()
+def run_training_pipeline(cfg) -> None:
+    logger = logging.getLogger()
     logger.info("Starting ML training pipeline")
 
     try:
-        # 1. Load config
-        config = load_config(config_path)
-
-        # 2. Load data
+        # Load data
         X, y = load_data()
         X = normalize_column_names(X)
 
-        # 3. Preprocess
+        # Preprocess
         X_train, X_test, y_train, y_test, scaler = preprocess_data(
             X,
             y,
-            test_size=config["data"]["test_size"],
-            random_state=config["data"]["random_state"],
+            test_size=cfg["data"]["test_size"],
+            random_state=cfg["data"]["random_state"],
         )
 
-        # 4. Model creation
+        # Model creation
         model = create_model(
-            model_type=config["model"]["type"], params=config["model"].get("params")
+            model_type=cfg["model"]["type"], params=cfg["model"].get("params")
         )
 
-        # 5. Train
+        # Train
         model = train_model(model, X_train, y_train)
 
-        # 6. Evaluate
+        # Evaluate
         metrics, cm = evaluate_model(model, X_test, y_test)
 
-        # 7. Training data
+        # Training data
         y_pred_train = model.predict(X_train)
         y_proba_train = (
             model.predict_proba(X_train)[:, 1]
@@ -50,15 +48,13 @@ def run_training_pipeline(config_path: str = "config.yaml") -> None:
         train_data_snapshot["pred"] = y_pred_train
         train_data_snapshot["proba"] = y_proba_train
 
-        # 8. Save
+        # Save
         save_artifacts(
             model=model,
             scaler=scaler,
             train_data=train_data_snapshot,
             metrics=metrics,
-            config=config,
             confusion_matrix=cm,
-            base_path=config["artifacts"]["path"],
         )
 
         logger.info("Training pipeline completed.")
