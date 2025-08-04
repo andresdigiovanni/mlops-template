@@ -6,7 +6,7 @@ from sklearn.linear_model import LogisticRegression
 
 logger = logging.getLogger()
 
-ModelType = Literal["lr", "lightgbm"]
+ModelType = Literal["logistic_regression", "lightgbm"]
 
 
 def create_model(model_type: ModelType, params: Optional[Dict[str, Any]] = None) -> Any:
@@ -14,7 +14,7 @@ def create_model(model_type: ModelType, params: Optional[Dict[str, Any]] = None)
     Factory function to create a model based on the given type and parameters.
 
     Args:
-        model_type (str): Type of model to create ('lr' or 'lightgbm').
+        model_type (str): Type of model to create ('logistic_regression' or 'lightgbm').
         params (dict, optional): Hyperparameters for the model.
 
     Returns:
@@ -29,7 +29,7 @@ def create_model(model_type: ModelType, params: Optional[Dict[str, Any]] = None)
         )
         params = params or {}
 
-        if model_type == "lr":
+        if model_type == "logistic_regression":
             return LogisticRegression(**params)
         elif model_type == "lightgbm":
             return lgb.LGBMClassifier(**params, verbose=-1)

@@ -6,6 +6,7 @@ from src.evaluation import evaluate_model
 from src.explainer import explain_model
 from src.features import preprocess_data
 from src.models import create_model, train_model
+from src.tuning import create_tuner
 
 
 def run_training_pipeline(cfg) -> None:
@@ -25,10 +26,12 @@ def run_training_pipeline(cfg) -> None:
             random_state=cfg["data"]["random_state"],
         )
 
+        # Hyperparameter tuner
+        tuner = create_tuner(cfg["model"]["type"], X_train, y_train)
+        best_params = tuner.run()
+
         # Model creation
-        model = create_model(
-            model_type=cfg["model"]["type"], params=cfg["model"].get("params")
-        )
+        model = create_model(model_type=cfg["model"]["type"], params=best_params)
 
         # Train
         model = train_model(model, X_train, y_train)
@@ -55,6 +58,7 @@ def run_training_pipeline(cfg) -> None:
         # Save
         save_artifacts(
             model=model,
+            params=best_params,
             scaler=scaler,
             train_data=train_data_snapshot,
             metrics=metrics,

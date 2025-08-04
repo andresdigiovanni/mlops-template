@@ -7,7 +7,7 @@ from src.models import create_model
 
 def test_get_logistic_model():
     # Act
-    model = create_model("lr", {"max_iter": 200})
+    model = create_model("logistic_regression", {"max_iter": 200})
 
     # Assert
     assert isinstance(model, LogisticRegression)

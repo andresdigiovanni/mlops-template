@@ -10,4 +10,4 @@ drift:
   path: ../../../.drift_reports
 
 defaults:
-  - model: lr
+  - model: logistic_regression

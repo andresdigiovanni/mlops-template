@@ -14,6 +14,7 @@ logger = logging.getLogger()
 
 def save_artifacts(
     model: Any,
+    params: Dict,
     scaler: Any,
     train_data: pd.DataFrame,
     metrics: Dict[str, Any],
@@ -21,10 +22,11 @@ def save_artifacts(
     base_path: str = "artifacts",
 ) -> Path:
     """
-    Saves model, scaler, metrics, and confusion matrix to a timestamped artifact directory.
+    Saves model, params, scaler, metrics, and confusion matrix to a timestamped artifact directory.
 
     Args:
         model: Trained model instance.
+        params: Model parameters.
         scaler: Fitted scaler instance.
         metrics (dict): Evaluation metrics.
         confusion_matrix (np.ndarray, optional): Confusion matrix to save as heatmap.
@@ -40,6 +42,11 @@ def save_artifacts(
         # Save model
         joblib.dump(model, run_path / "model.pkl")
         logger.info(f"Model saved to {run_path / 'model.pkl'}")
+
+        # Save parameters
+        with open(run_path / "params.json", "w") as f:
+            json.dump(params, f, indent=4)
+        logger.info(f"Params saved to {run_path / 'params.json'}")
 
         # Save scaler
         joblib.dump(scaler, run_path / "scaler.pkl")
