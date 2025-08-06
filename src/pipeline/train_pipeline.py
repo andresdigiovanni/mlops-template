@@ -10,7 +10,7 @@ from src.evaluation import (
 )
 from src.explainer import explain_model
 from src.features import preprocess_data
-from src.models import create_model, train_model
+from src.models import create_model
 from src.tuning import create_tuner
 
 
@@ -39,7 +39,7 @@ def run_training_pipeline(cfg) -> None:
         model = create_model(model_type=cfg["model"]["type"], params=best_params)
 
         # Train
-        model = train_model(model, X_train, y_train)
+        model.fit(X_train, y_train)
 
         # Evaluate
         metrics, y_pred, y_proba = evaluate_model(model, X_test, y_test)
