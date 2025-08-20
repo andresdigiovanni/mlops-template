@@ -4,7 +4,6 @@ from typing import Any, Dict, Tuple
 import numpy as np
 from sklearn.metrics import (
     accuracy_score,
-    classification_report,
     f1_score,
     log_loss,
     precision_score,
@@ -46,9 +45,6 @@ def evaluate_model(
             "precision": precision_score(y_test, y_pred),
             "recall": recall_score(y_test, y_pred),
             "f1_score": f1_score(y_test, y_pred),
-            "classification_report": classification_report(
-                y_test, y_pred, output_dict=True
-            ),
         }
 
         if y_proba is not None:

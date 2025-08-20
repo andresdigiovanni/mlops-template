@@ -11,14 +11,17 @@ dependencies = [
     "jupyterlab>=4.4.5",
     "lightgbm>=4.6.0",
     "matplotlib>=3.9.4",
+    "mlflow>=3.2.0",
     "optuna>=4.4.0",
     "pandas>=2.3.1",
     "pydantic>=2.11.7",
+    "python-dotenv>=1.1.1",
     "scikit-learn>=1.6.1",
     "seaborn>=0.13.2",
     "shap>=0.48.0",
     "streamlit>=1.47.1",
     "uvicorn>=0.35.0",
+    "wandb>=0.21.1",
 ]
 
 [dependency-groups]

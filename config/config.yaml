@@ -1,5 +1,5 @@
 artifacts:
-  path: ../../../outputs/2025-08-04/10-31-13/artifacts
+  base_path: artifacts
   
 data:
   test_size: 0.2
@@ -9,5 +9,10 @@ drift:
   buffer_size: 5
   path: ../../../.drift_reports
 
+experiment_tracker:
+  params:
+    experiment_name: breast_cancer_ml
+
 defaults:
+  - experiment_tracker: wandb
   - model: logistic_regression

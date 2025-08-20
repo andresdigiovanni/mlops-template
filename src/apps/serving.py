@@ -1,10 +1,11 @@
 import random
 
 import hydra
+import joblib
 import pandas as pd
 from omegaconf import DictConfig
 
-from src.artifacts import load_artifacts
+from src.experiment_tracker import create_experiment_tracker
 from src.monitoring import DriftDetector, DriftState
 from src.pipeline import run_inference_pipeline
 from src.schemas import PredictionRequest, PredictionResponse
@@ -14,8 +15,23 @@ from src.schemas import PredictionRequest, PredictionResponse
 def main(cfg: DictConfig):
     LABELS = {0: "malignant", 1: "benign"}
 
+    model_name = cfg["model"]["name"]
+
     # Load artifacts
-    model, scaler, train_data = load_artifacts(cfg["artifacts"]["path"])
+    tracker = create_experiment_tracker(
+        cfg["experiment_tracker"]["type"], cfg["experiment_tracker"]["params"]
+    )
+
+    model = tracker.load_model(model_name)
+
+    scaler_path = tracker.get_artifact(model_name, artifact_path="artifact/scaler.pkl")
+    scaler = joblib.load(scaler_path)
+
+    train_data_path = tracker.get_artifact(
+        model_name, artifact_path="dataset/train_data.csv"
+    )
+    train_data = pd.read_csv(train_data_path)
+
     training_data = train_data.drop(["target", "pred", "proba"], axis=1)
     training_preds = train_data[["proba"]]
 

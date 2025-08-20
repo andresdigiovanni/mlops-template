@@ -52,7 +52,7 @@ def plot_confusion_matrix(
         ax.set_title(title)
 
         plt.tight_layout()
-        plt.savefig(run_path / "confusion_matrix.png")
+        plt.savefig(run_path / "cm.png")
         plt.close(fig)
 
         logger.info("Generated confusion matrix figure.")

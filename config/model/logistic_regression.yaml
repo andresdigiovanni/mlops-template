@@ -1,1 +1,2 @@
 type: "logistic_regression"
+name: "lr_model"

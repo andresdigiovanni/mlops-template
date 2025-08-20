@@ -28,7 +28,7 @@ def plot_precision_recall_curve(
         plt.legend(loc="lower left")
         plt.grid(True)
         plt.tight_layout()
-        plt.savefig(run_path / "precision_recall_curve.png")
+        plt.savefig(run_path / "pr_curve.png")
         plt.close()
 
         logger.info("Precision-Recall curve saved.")

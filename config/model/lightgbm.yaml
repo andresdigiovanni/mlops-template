@@ -1,1 +1,2 @@
 type: "lightgbm"
+name: "lgbm_model"
