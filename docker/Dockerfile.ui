@@ -7,12 +7,12 @@ WORKDIR /app
 RUN pip install uv
 
 COPY pyproject.toml /app/pyproject.toml
+COPY README.md /app/README.md
+COPY src /app/src
+COPY config /app/config
 
 # Install dependencies from pyproject.toml
 RUN uv sync
-
-COPY ./src /app/src
-COPY ./config /app/config
 
 # Expose port for Streamlit
 EXPOSE 8501

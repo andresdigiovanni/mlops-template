@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 
 from src.artifacts import save_artifacts
 from src.data import load_data, normalize_column_names
@@ -66,7 +65,7 @@ def run_training_pipeline(cfg) -> None:
         train_data_snapshot["proba"] = y_train_proba
 
         # Save
-        save_artifacts(
+        base_path = save_artifacts(
             model=model,
             params=best_params,
             scaler=scaler,
@@ -78,7 +77,6 @@ def run_training_pipeline(cfg) -> None:
         tracker = create_experiment_tracker(
             cfg["experiment_tracker"]["type"], cfg["experiment_tracker"]["params"]
         )
-        base_path = Path(cfg["artifacts"]["base_path"])
 
         with tracker.start_run():
             tracker.log_params(best_params)

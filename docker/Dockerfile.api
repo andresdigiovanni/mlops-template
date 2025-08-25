@@ -3,19 +3,24 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
-# Install uv
+# Install necessary system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
 RUN pip install uv
 
+# Copy project files
 COPY pyproject.toml /app/pyproject.toml
+COPY README.md /app/README.md
+COPY src /app/src
+COPY config /app/config
 
-# Install dependencies from pyproject.toml
+# Instalar dependencias de Python con uv
 RUN uv sync
 
-COPY ./src /app/src
-COPY ./config /app/config
-
-# Expose port for FastAPI
+# Exponer puerto para FastAPI
 EXPOSE 8000
 
-# Start FastAPI app
+# Comando para iniciar la app
 CMD ["uv", "run", "uvicorn", "src.api.endpoints:app", "--host", "0.0.0.0", "--port", "8000"]
