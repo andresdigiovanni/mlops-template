@@ -1,2 +1,3 @@
-type: "logistic_regression"
-name: "lr_model"
+type: logistic_regression
+name: lr_model
+explainer: linear

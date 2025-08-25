@@ -14,4 +14,5 @@ wheels/
 
 # Artifacts and logs
 .drift_reports/
+.tracker/
 outputs/

@@ -14,5 +14,5 @@ experiment_tracker:
     experiment_name: breast_cancer_ml
 
 defaults:
-  - experiment_tracker: wandb
+  - experiment_tracker: local
   - model: logistic_regression

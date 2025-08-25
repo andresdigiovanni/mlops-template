@@ -50,7 +50,7 @@ def run_training_pipeline(cfg) -> None:
         plot_roc_curve(y_test, y_test_proba)
 
         # Explainer
-        explain_model(model, X_train)
+        explain_model(model, X_train, cfg["model"]["explainer"])
 
         # Training data
         y_train_pred = model.predict(X_train)
