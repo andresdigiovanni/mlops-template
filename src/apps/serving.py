@@ -13,7 +13,7 @@ from src.schemas import PredictionRequest, PredictionResponse
 
 @hydra.main(config_path="../../config", config_name="config")
 def main(cfg: DictConfig):
-    LABELS = {0: "malignant", 1: "benign"}
+    LABELS = {0: "no", 1: "yes"}
 
     model_name = cfg["model"]["name"]
 
@@ -65,37 +65,54 @@ def main(cfg: DictConfig):
 
 
 def generate_random_prediction():
+    JOBS = [
+        "management",
+        "blue-collar",
+        "unemployed",
+        "housemaid",
+        "technician",
+        "retired",
+        "admin.",
+        "services",
+        "self-employed",
+    ]
+    MARITALS = ["married", "single", "divorced"]
+    EDUCATIONS = ["primary", "secondary", "tertiary", "unknown"]
+    YES_NO = ["yes", "no"]
+    CONTACTS = ["cellular", "telephone"]
+    MONTHS = [
+        "jan",
+        "feb",
+        "mar",
+        "apr",
+        "may",
+        "jun",
+        "jul",
+        "aug",
+        "sep",
+        "oct",
+        "nov",
+        "dec",
+    ]
+    POUTCOMES = ["failure", "success", "other", "unknown"]
+
     return PredictionRequest(
-        mean_radius=randomize_value(14.5),
-        mean_texture=randomize_value(20.5),
-        mean_perimeter=randomize_value(96.2),
-        mean_area=randomize_value(644.1),
-        mean_smoothness=randomize_value(0.105),
-        mean_compactness=randomize_value(0.15),
-        mean_concavity=randomize_value(0.12),
-        mean_concave_points=randomize_value(0.075),
-        mean_symmetry=randomize_value(0.18),
-        mean_fractal_dimension=randomize_value(0.06),
-        radius_error=randomize_value(0.55),
-        texture_error=randomize_value(1.0),
-        perimeter_error=randomize_value(3.3),
-        area_error=randomize_value(40.0),
-        smoothness_error=randomize_value(0.006),
-        compactness_error=randomize_value(0.015),
-        concavity_error=randomize_value(0.02),
-        concave_points_error=randomize_value(0.01),
-        symmetry_error=randomize_value(0.015),
-        fractal_dimension_error=randomize_value(0.003),
-        worst_radius=randomize_value(16.5),
-        worst_texture=randomize_value(28.0),
-        worst_perimeter=randomize_value(105.0),
-        worst_area=randomize_value(800.0),
-        worst_smoothness=randomize_value(0.13),
-        worst_compactness=randomize_value(0.2),
-        worst_concavity=randomize_value(0.25),
-        worst_concave_points=randomize_value(0.15),
-        worst_symmetry=randomize_value(0.25),
-        worst_fractal_dimension=randomize_value(0.08),
+        age=random.randint(18, 90),
+        job=random.choice(JOBS),
+        marital=random.choice(MARITALS),
+        education=random.choice(EDUCATIONS),
+        default=random.choice(YES_NO),
+        balance=randomize_value(1500, percent=1.0),
+        housing=random.choice(YES_NO),
+        loan=random.choice(YES_NO),
+        contact=random.choice(CONTACTS),
+        day=random.randint(1, 31),
+        month=random.choice(MONTHS),
+        duration=randomize_value(300, percent=1.0),
+        campaign=random.randint(1, 10),
+        pdays=randomize_value(50, percent=1.0),
+        previous=random.randint(0, 10),
+        poutcome=random.choice(POUTCOMES),
     )
 
 

@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from src.features import preprocess_data
 from src.monitoring import DriftDetector, DriftState
 
 logger = logging.getLogger()
@@ -13,14 +14,15 @@ logger = logging.getLogger()
 def run_inference_pipeline(
     model: BaseEstimator,
     transformer: TransformerMixin,
-    input_data: pd.DataFrame,
+    X: pd.DataFrame,
     drift_detector: DriftDetector,
     drift_state: DriftState,
     drift_output_path: str,
 ) -> np.ndarray:
     try:
-        logger.info(f"Running prediction on input shape: {input_data.shape}")
-        X = transformer.transform(input_data)
+        logger.info(f"Running prediction on input shape: {X.shape}")
+        X = preprocess_data(X)
+        X = transformer.transform(X)
 
         preds = model.predict(X)
         probs = model.predict_proba(X)
@@ -28,7 +30,7 @@ def run_inference_pipeline(
         logger.info("Prediction completed.")
 
         # Lazy init DriftDetector
-        should_check = drift_state.add_input(input_data, probs[:, 1])
+        should_check = drift_state.add_input(X, probs[:, 1])
 
         if should_check:
             logger.info("Drift buffer full. Launching async drift detection...")

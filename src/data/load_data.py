@@ -28,8 +28,10 @@ def load_data(path: str, target: str = "target") -> Tuple[pd.DataFrame, pd.Serie
 
         if ext == ".csv":
             df = pd.read_csv(file_path)
+
         elif ext in [".parquet", ".parq"]:
             df = pd.read_parquet(file_path)
+
         else:
             raise ValueError(f"Unsupported file extension: {ext}")
 
@@ -38,8 +40,6 @@ def load_data(path: str, target: str = "target") -> Tuple[pd.DataFrame, pd.Serie
 
         X = df.drop(columns=target)
         y = df[target]
-
-        y = y.apply(lambda x: 1 if x == "yes" else 0)
 
         logger.info(f"Dataset loaded successfully with shape: X={X.shape}, y={y.shape}")
         return X, y

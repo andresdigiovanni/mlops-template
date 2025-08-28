@@ -1,1 +1,2 @@
+from .prepare_training_data import prepare_training_data
 from .preprocess import preprocess_data

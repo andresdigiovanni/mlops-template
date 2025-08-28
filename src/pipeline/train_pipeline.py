@@ -11,8 +11,9 @@ from src.evaluation import (
 )
 from src.experiment_tracker import create_experiment_tracker
 from src.explainer import explain_model
-from src.features import preprocess_data
+from src.features import prepare_training_data, preprocess_data
 from src.models import create_model
+from src.target import encode_target
 from src.tuning import create_tuner
 
 
@@ -24,13 +25,15 @@ def run_training_pipeline(cfg) -> None:
         # Load data
         X, y = load_data(cfg["data"]["path"], cfg["data"]["target"])
         X = normalize_column_names(X)
+        y = encode_target(y)
 
         # Base model
         model = create_model(model_type=cfg["model"]["type"])
 
-        # Preprocess
+        # Prepare training data
+        X = preprocess_data(X)
         X_train, X_test, y_train, y_test, transformer, transformations = (
-            preprocess_data(
+            prepare_training_data(
                 model,
                 X,
                 y,
