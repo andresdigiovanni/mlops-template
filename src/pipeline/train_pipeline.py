@@ -22,7 +22,7 @@ def run_training_pipeline(cfg) -> None:
 
     try:
         # Load data
-        X, y = load_data()
+        X, y = load_data(cfg["data"]["path"], cfg["data"]["target"])
         X = normalize_column_names(X)
 
         # Base model

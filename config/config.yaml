@@ -1,6 +1,8 @@
 data:
-  test_size: 0.2
+  path: ../../../data/bank/train.csv
   random_state: 42
+  target: y
+  test_size: 0.2
 
 drift:
   buffer_size: 5
@@ -8,7 +10,7 @@ drift:
 
 experiment_tracker:
   params:
-    experiment_name: breast_cancer_ml
+    experiment_name: bank
 
 scoring: roc_auc
 
