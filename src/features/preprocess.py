@@ -14,6 +14,7 @@ def preprocess_data(
     model: Any,
     X: pd.DataFrame,
     y: pd.Series,
+    scoring: str,
     test_size: float = 0.2,
     random_state: int = 42,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, TransformerMixin, Dict]:
@@ -43,7 +44,7 @@ def preprocess_data(
             X, y, test_size=test_size, random_state=random_state
         )
 
-        transformations = auto_feature_pipeline(X_train, y_train, model, scoring="f1")
+        transformations = auto_feature_pipeline(X_train, y_train, model, scoring)
 
         bfe = BeaverPipeline(transformations)
         X_train = bfe.fit_transform(X_train, y_train)

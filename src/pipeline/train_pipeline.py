@@ -34,13 +34,16 @@ def run_training_pipeline(cfg) -> None:
                 model,
                 X,
                 y,
+                scoring=cfg["scoring"],
                 test_size=cfg["data"]["test_size"],
                 random_state=cfg["data"]["random_state"],
             )
         )
 
         # Hyperparameter tuner
-        tuner = create_tuner(cfg["model"]["type"], X_train, y_train)
+        tuner = create_tuner(
+            cfg["model"]["type"], X_train, y_train, scoring=cfg["scoring"]
+        )
         best_params = tuner.run()
 
         # Model creation
