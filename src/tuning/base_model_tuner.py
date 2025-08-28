@@ -29,13 +29,13 @@ class BaseModelTuner(ABC):
     def run(self):
         self.study = optuna.create_study(direction=self.direction)
         self.study.optimize(self._objective, n_trials=self.n_trials)
-        return self.study.best_params
+        return self._best_params()
 
     def get_best_score(self) -> float:
         return self.study.best_value
 
     def get_best_params(self) -> dict:
-        return self.study.best_params
+        return self._best_params()
 
     def _objective(self, trial):
         model = self._build_model(trial)
@@ -46,4 +46,8 @@ class BaseModelTuner(ABC):
 
     @abstractmethod
     def _build_model(self, trial):
+        pass
+
+    @abstractmethod
+    def _best_params(self):
         pass

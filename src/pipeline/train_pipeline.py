@@ -1,6 +1,7 @@
 import logging
+from pathlib import Path
 
-from src.artifacts import save_artifacts
+from src.artifacts import save_artifact
 from src.data import load_data, normalize_column_names
 from src.evaluation import (
     evaluate_model,
@@ -24,12 +25,18 @@ def run_training_pipeline(cfg) -> None:
         X, y = load_data()
         X = normalize_column_names(X)
 
+        # Base model
+        model = create_model(model_type=cfg["model"]["type"])
+
         # Preprocess
-        X_train, X_test, y_train, y_test, scaler = preprocess_data(
-            X,
-            y,
-            test_size=cfg["data"]["test_size"],
-            random_state=cfg["data"]["random_state"],
+        X_train, X_test, y_train, y_test, transformer, transformations = (
+            preprocess_data(
+                model,
+                X,
+                y,
+                test_size=cfg["data"]["test_size"],
+                random_state=cfg["data"]["random_state"],
+            )
         )
 
         # Hyperparameter tuner
@@ -64,14 +71,14 @@ def run_training_pipeline(cfg) -> None:
         train_data_snapshot["pred"] = y_train_pred
         train_data_snapshot["proba"] = y_train_proba
 
-        # Save
-        base_path = save_artifacts(
-            model=model,
-            params=best_params,
-            scaler=scaler,
-            train_data=train_data_snapshot,
-            metrics=metrics,
-        )
+        # Save artifacts to local directory
+        base_path = Path("artifacts")
+        save_artifact(model, base_path / "model.pkl")
+        save_artifact(best_params, base_path / "params.json")
+        save_artifact(transformer, base_path / "transformer.pkl")
+        save_artifact(transformations, base_path / "transformations.json")
+        save_artifact(train_data_snapshot, base_path / "train_data.csv")
+        save_artifact(metrics, base_path / "metrics.json")
 
         # Experiment tracking
         tracker = create_experiment_tracker(
@@ -90,22 +97,15 @@ def run_training_pipeline(cfg) -> None:
                 output_example=y_train_pred,
             )
 
+            tracker.log_artifact(base_path / "transformer.pkl", category="artifact")
             tracker.log_artifact(
-                str(base_path / "scaler.pkl"), artifact_path="artifact"
+                base_path / "transformations.json", category="artifact"
             )
-            tracker.log_artifact(
-                str(base_path / "train_data.csv"), artifact_path="dataset"
-            )
-            tracker.log_artifact(str(base_path / "cm.png"), artifact_path="images")
-            tracker.log_artifact(
-                str(base_path / "pr_curve.png"), artifact_path="images"
-            )
-            tracker.log_artifact(
-                str(base_path / "roc_curve.png"), artifact_path="images"
-            )
-            tracker.log_artifact(
-                str(base_path / "shap_summary.png"), artifact_path="images"
-            )
+            tracker.log_artifact(base_path / "train_data.csv", category="dataset")
+            tracker.log_artifact(base_path / "cm.png", category="images")
+            tracker.log_artifact(base_path / "pr_curve.png", category="images")
+            tracker.log_artifact(base_path / "roc_curve.png", category="images")
+            tracker.log_artifact(base_path / "shap_summary.png", category="images")
 
         logger.info("Training pipeline completed.")
 

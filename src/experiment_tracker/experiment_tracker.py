@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 
@@ -45,7 +46,7 @@ class ExperimentTracker(ABC):
         pass
 
     @abstractmethod
-    def log_artifact(self, file_path: str, artifact_path: str = None):
+    def log_artifact(self, file_path: Path, category: str = None):
         pass
 
     # -----------------------------
@@ -61,7 +62,5 @@ class ExperimentTracker(ABC):
         pass
 
     @abstractmethod
-    def get_artifact(
-        self, model_name: str, artifact_path: str, alias: str = "production"
-    ):
+    def get_artifact(self, model_name: str, path: str, alias: str = "production"):
         pass

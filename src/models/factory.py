@@ -30,9 +30,13 @@ def create_model(model_type: ModelType, params: Optional[Dict[str, Any]] = None)
         params = params or {}
 
         if model_type == "logistic_regression":
+            params = {"max_iter": 1000, **params}
             return LogisticRegression(**params)
+
         elif model_type == "lightgbm":
-            return lgb.LGBMClassifier(**params, verbose=-1)
+            params = {"verbose": -1, **params}
+            return lgb.LGBMClassifier(**params)
+
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
 

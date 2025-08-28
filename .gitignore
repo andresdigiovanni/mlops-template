@@ -15,4 +15,6 @@ wheels/
 # Artifacts and logs
 .drift_reports/
 .tracker/
+mlartifacts/
+mlruns/
 outputs/

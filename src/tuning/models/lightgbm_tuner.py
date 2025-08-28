@@ -20,3 +20,6 @@ class LightGBMTuner(BaseModelTuner):
         }
 
         return LGBMClassifier(**params, verbose=-1)
+
+    def _best_params(self):
+        return self.study.best_params

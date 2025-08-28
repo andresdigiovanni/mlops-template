@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 import mlflow
@@ -44,8 +45,8 @@ class MLflowTracker(ExperimentTracker):
     def log_metrics(self, metrics: Dict[str, float], step: Optional[int] = None):
         mlflow.log_metrics(metrics, step)
 
-    def log_artifact(self, file_path: str, artifact_path: str = None):
-        mlflow.log_artifact(file_path, artifact_path=artifact_path)
+    def log_artifact(self, file_path: Path, category: str = None):
+        mlflow.log_artifact(file_path, artifact_path=category)
 
     # -----------------------------
     # Model handling
@@ -79,11 +80,7 @@ class MLflowTracker(ExperimentTracker):
     def load_model(self, model_name: str, alias: str = "production"):
         return mlflow.sklearn.load_model(f"models:/{model_name}@{alias}")
 
-    def get_artifact(
-        self, model_name: str, artifact_path: str, alias: str = "production"
-    ):
+    def get_artifact(self, model_name: str, path: str, alias: str = "production"):
         run_id = self.client.get_model_version_by_alias(model_name, alias).run_id
 
-        return mlflow.artifacts.download_artifacts(
-            run_id=run_id, artifact_path=artifact_path
-        )
+        return mlflow.artifacts.download_artifacts(run_id=run_id, artifact_path=path)

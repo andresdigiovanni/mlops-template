@@ -24,12 +24,10 @@ def main(cfg: DictConfig):
 
     model = tracker.load_model(model_name)
 
-    scaler_path = tracker.get_artifact(model_name, artifact_path="artifact/scaler.pkl")
-    scaler = joblib.load(scaler_path)
+    transformer_path = tracker.get_artifact(model_name, path="artifact/transformer.pkl")
+    transformer = joblib.load(transformer_path)
 
-    train_data_path = tracker.get_artifact(
-        model_name, artifact_path="dataset/train_data.csv"
-    )
+    train_data_path = tracker.get_artifact(model_name, path="dataset/train_data.csv")
     train_data = pd.read_csv(train_data_path)
 
     training_data = train_data.drop(["target", "pred", "proba"], axis=1)
@@ -47,7 +45,7 @@ def main(cfg: DictConfig):
 
     # Execute prediction
     preds, probs = run_inference_pipeline(
-        model, scaler, input_df, drift_detector, drift_state, cfg["drift"]["path"]
+        model, transformer, input_df, drift_detector, drift_state, cfg["drift"]["path"]
     )
     responses = []
 

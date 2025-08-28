@@ -82,11 +82,11 @@ class WandbTracker(ExperimentTracker):
     def log_metrics(self, metrics: Dict[str, float], step: Optional[int] = None):
         self.run.log(metrics, step=step)
 
-    def log_artifact(self, file_path: str, artifact_path: str = None):
-        if artifact_path == "images":
-            self.run.log({Path(file_path).stem: wandb.Image(file_path)})
+    def log_artifact(self, file_path: Path, category: str = None):
+        if category == "images":
+            self.run.log({file_path.stem: wandb.Image(file_path)})
         else:
-            self._artifact_files.append((file_path, artifact_path))
+            self._artifact_files.append((file_path, category))
 
     # -----------------------------
     # Model handling
@@ -114,9 +114,7 @@ class WandbTracker(ExperimentTracker):
         model_dir = Path(artifact.download())
         return joblib.load(model_dir / "model.pkl")
 
-    def get_artifact(
-        self, model_name: str, artifact_path: str, alias: str = "production"
-    ):
+    def get_artifact(self, model_name: str, path: str, alias: str = "production"):
         api = wandb.Api()
         artifact_ref = f"{self.experiment_name}/{model_name}:{alias}"
         if self.entity:
@@ -124,11 +122,9 @@ class WandbTracker(ExperimentTracker):
 
         artifact = api.artifact(artifact_ref, type="model")
         artifact_dir = Path(artifact.download())
-        target_path = artifact_dir / artifact_path
+        target_path = artifact_dir / path
 
         if not target_path.exists():
-            raise FileNotFoundError(
-                f"Artifact {artifact_path} not found in {artifact_dir}"
-            )
+            raise FileNotFoundError(f"Artifact {path} not found in {artifact_dir}")
 
         return str(target_path)

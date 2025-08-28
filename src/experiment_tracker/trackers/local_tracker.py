@@ -73,18 +73,16 @@ class LocalTracker(ExperimentTracker):
         for k, v in metrics.items():
             self.log_metric(k, v, step)
 
-    def log_artifact(self, file_path: str, artifact_path: str = None):
+    def log_artifact(self, file_path: Path, category: str = None):
         if not self.current_run_dir:
             raise RuntimeError("No active run. Call start_run() first.")
 
         artifact_dir = (
-            self.current_run_dir / artifact_path
-            if artifact_path
-            else self.current_run_dir
+            self.current_run_dir / category if category else self.current_run_dir
         )
         artifact_dir.mkdir(parents=True, exist_ok=True)
 
-        target_file = artifact_dir / Path(file_path).name
+        target_file = artifact_dir / file_path.name
         shutil.copy(file_path, target_file)
 
         self.run_data["artifacts"].append(
@@ -182,9 +180,7 @@ class LocalTracker(ExperimentTracker):
 
         return joblib.load(model_path)
 
-    def get_artifact(
-        self, model_name: str, artifact_path: str, alias: str = "production"
-    ):
+    def get_artifact(self, model_name: str, path: str, alias: str = "production"):
         # Resolver alias → versión
         aliases_file = self.models_dir / "aliases.json"
         with open(aliases_file, "r") as f:
@@ -203,7 +199,7 @@ class LocalTracker(ExperimentTracker):
 
         # Localizar artefacto en el run correspondiente
         run_dir = self.experiments_dir / run_id
-        target_path = run_dir / artifact_path
+        target_path = run_dir / path
         if not target_path.exists():
             raise FileNotFoundError(f"Artifact not found at {target_path}")
 

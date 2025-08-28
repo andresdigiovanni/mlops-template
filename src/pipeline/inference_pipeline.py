@@ -3,8 +3,7 @@ from threading import Thread
 
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
-from sklearn.preprocessing import StandardScaler
+from sklearn.base import BaseEstimator, TransformerMixin
 
 from src.monitoring import DriftDetector, DriftState
 
@@ -13,7 +12,7 @@ logger = logging.getLogger()
 
 def run_inference_pipeline(
     model: BaseEstimator,
-    scaler: StandardScaler,
+    transformer: TransformerMixin,
     input_data: pd.DataFrame,
     drift_detector: DriftDetector,
     drift_state: DriftState,
@@ -21,10 +20,10 @@ def run_inference_pipeline(
 ) -> np.ndarray:
     try:
         logger.info(f"Running prediction on input shape: {input_data.shape}")
-        X_scaled = scaler.transform(input_data)
+        X = transformer.transform(input_data)
 
-        preds = model.predict(X_scaled)
-        probs = model.predict_proba(X_scaled)
+        preds = model.predict(X)
+        probs = model.predict_proba(X)
 
         logger.info("Prediction completed.")
 
