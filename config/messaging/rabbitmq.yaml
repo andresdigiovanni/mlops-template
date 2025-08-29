@@ -1,0 +1,5 @@
+type: rabbitmq
+params:
+  host: rabbitmq
+  port: 5672
+  queue: predictions_queue

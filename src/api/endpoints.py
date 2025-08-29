@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from hydra import compose, initialize
 
 from src.experiment_tracker import create_experiment_tracker
-from src.monitoring import DriftDetector, DriftState
+from src.messaging import create_messaging_client
 from src.pipeline import run_inference_pipeline
 from src.schemas import PredictionRequest, PredictionResponse
 
@@ -39,18 +39,14 @@ tracker = create_experiment_tracker(
 
 model = tracker.load_model(model_name)
 
-scaler_path = tracker.get_artifact(model_name, path="artifact/scaler.pkl")
-scaler = joblib.load(scaler_path)
+transformer_path = tracker.get_artifact(model_name, path="artifact/transformer.pkl")
+transformer = joblib.load(transformer_path)
 
-train_data_path = tracker.get_artifact(model_name, path="dataset/train_data.csv")
-train_data = pd.read_csv(train_data_path)
-
-training_data = train_data.drop(["target", "pred", "proba"], axis=1)
-training_preds = train_data[["proba"]]
-
-# Initialize drift detector
-drift_state = DriftState(cfg["drift"]["path"], buffer_size=cfg["drift"]["buffer_size"])
-drift_detector = DriftDetector(training_data, training_preds)
+# Create messaging client
+messaging_client = create_messaging_client(
+    cfg["messaging"]["type"], cfg["messaging"]["params"]
+)
+messaging_client.connect()
 
 
 @app.post("/predict", response_model=List[PredictionResponse])
@@ -59,12 +55,7 @@ def predict(inputs: List[PredictionRequest]) -> List[PredictionResponse]:
 
     try:
         preds, probs = run_inference_pipeline(
-            model,
-            scaler,
-            input_df,
-            drift_detector,
-            drift_state,
-            cfg["drift"]["path"],
+            model, transformer, input_df, messaging_client
         )
 
         responses = []

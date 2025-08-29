@@ -6,7 +6,7 @@ import pandas as pd
 from omegaconf import DictConfig
 
 from src.experiment_tracker import create_experiment_tracker
-from src.monitoring import DriftDetector, DriftState
+from src.messaging import create_messaging_client
 from src.pipeline import run_inference_pipeline
 from src.schemas import PredictionRequest, PredictionResponse
 
@@ -27,17 +27,11 @@ def main(cfg: DictConfig):
     transformer_path = tracker.get_artifact(model_name, path="artifact/transformer.pkl")
     transformer = joblib.load(transformer_path)
 
-    train_data_path = tracker.get_artifact(model_name, path="dataset/train_data.csv")
-    train_data = pd.read_csv(train_data_path)
-
-    training_data = train_data.drop(["target", "pred", "proba"], axis=1)
-    training_preds = train_data[["proba"]]
-
-    # Initialize drift detector
-    drift_state = DriftState(
-        cfg["drift"]["path"], buffer_size=cfg["drift"]["buffer_size"]
+    # Create messaging client
+    messaging_client = create_messaging_client(
+        cfg["messaging"]["type"], cfg["messaging"]["params"]
     )
-    drift_detector = DriftDetector(training_data, training_preds)
+    messaging_client.connect()
 
     # Create an example of input data
     example_input = generate_random_prediction()
@@ -45,7 +39,7 @@ def main(cfg: DictConfig):
 
     # Execute prediction
     preds, probs = run_inference_pipeline(
-        model, transformer, input_df, drift_detector, drift_state, cfg["drift"]["path"]
+        model, transformer, input_df, messaging_client
     )
     responses = []
 
@@ -62,6 +56,8 @@ def main(cfg: DictConfig):
     # Show result
     for r in responses:
         print(r.model_dump_json())
+
+    messaging_client.close()
 
 
 def generate_random_prediction():

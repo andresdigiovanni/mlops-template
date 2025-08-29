@@ -16,4 +16,5 @@ scoring: roc_auc
 
 defaults:
   - experiment_tracker: local
+  - messaging: rabbitmq
   - model: logistic_regression

@@ -1,4 +1,16 @@
 services:
+  drift_reporter:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.drift_detector
+    container_name: drift_detector
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ../.drift_reports:/app/.drift_reports
+      - ../.tracker:/app/.tracker
+    restart: unless-stopped
+
   api:
     build:
       context: ..
@@ -6,11 +18,11 @@ services:
     container_name: cancer-predict-api
     ports:
       - "8000:8000"
+    depends_on:
+      - drift_reporter
+      - rabbitmq
     volumes:
-      - ../.artifacts:/.artifacts
-      - ../.drift_reports:/.drift_reports
       - ../.tracker:/.tracker
-      - ../.outputs_api:/app/outputs
     restart: unless-stopped
 
   ui:
@@ -24,5 +36,11 @@ services:
       - api
     volumes:
       - ../.drift_reports:/.drift_reports
-      - ../.outputs_ui:/app/outputs
     restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"

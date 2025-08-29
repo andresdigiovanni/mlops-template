@@ -1,0 +1,18 @@
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install uv
+RUN pip install uv
+
+COPY pyproject.toml /app/pyproject.toml
+COPY README.md /app/README.md
+COPY src /app/src
+COPY config /app/config
+
+# Install dependencies from pyproject.toml
+RUN uv sync
+
+# Comando por defecto
+CMD ["uv", "run", "src/apps/drift_detector.py"]

@@ -21,7 +21,8 @@ class DriftState:
         """
         with self.lock:
             self.input_buffer.append(input_data)
-            pred_df = pd.DataFrame(proba, columns=["proba"])
+            pred_df = proba.to_frame(name="proba")
+
             full_buffer = self.pred_buffer.append(pred_df)
             return full_buffer is not None
 
