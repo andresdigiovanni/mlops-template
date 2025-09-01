@@ -29,7 +29,7 @@ def main(cfg: DictConfig):
 
     # Create messaging client
     messaging_client = create_messaging_client(
-        cfg["messaging"]["type"], cfg["messaging"]["params"]
+        cfg["messaging"]["type"], cfg["messaging"].get("params")
     )
     messaging_client.connect()
 

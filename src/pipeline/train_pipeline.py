@@ -21,6 +21,8 @@ def run_training_pipeline(cfg) -> None:
     logger = logging.getLogger()
     logger.info("Starting ML training pipeline")
 
+    artifacts_path = Path(cfg["artifacts"]["path"])
+
     try:
         # Load data
         X, y = load_data(cfg["data"]["path"], cfg["data"]["target"])
@@ -57,12 +59,14 @@ def run_training_pipeline(cfg) -> None:
 
         # Evaluate
         metrics, y_test_pred, y_test_proba = evaluate_model(model, X_test, y_test)
-        plot_confusion_matrix(y_test, y_test_pred)
-        plot_precision_recall_curve(y_test, y_test_proba)
-        plot_roc_curve(y_test, y_test_proba)
+        plot_confusion_matrix(y_test, y_test_pred, base_path=artifacts_path)
+        plot_precision_recall_curve(y_test, y_test_proba, base_path=artifacts_path)
+        plot_roc_curve(y_test, y_test_proba, base_path=artifacts_path)
 
         # Explainer
-        explain_model(model, X_train, cfg["model"]["explainer"])
+        explain_model(
+            model, X_train, cfg["model"]["explainer"], base_path=artifacts_path
+        )
 
         # Training data
         y_train_pred = model.predict(X_train)
@@ -78,13 +82,12 @@ def run_training_pipeline(cfg) -> None:
         train_data_snapshot["proba"] = y_train_proba
 
         # Save artifacts to local directory
-        base_path = Path("artifacts")
-        save_artifact(model, base_path / "model.pkl")
-        save_artifact(best_params, base_path / "params.json")
-        save_artifact(transformer, base_path / "transformer.pkl")
-        save_artifact(transformations, base_path / "transformations.json")
-        save_artifact(train_data_snapshot, base_path / "train_data.csv")
-        save_artifact(metrics, base_path / "metrics.json")
+        save_artifact(model, artifacts_path / "model.pkl")
+        save_artifact(best_params, artifacts_path / "params.json")
+        save_artifact(transformer, artifacts_path / "transformer.pkl")
+        save_artifact(transformations, artifacts_path / "transformations.json")
+        save_artifact(train_data_snapshot, artifacts_path / "train_data.csv")
+        save_artifact(metrics, artifacts_path / "metrics.json")
 
         # Experiment tracking
         tracker = create_experiment_tracker(
@@ -103,15 +106,17 @@ def run_training_pipeline(cfg) -> None:
                 output_example=y_train_pred,
             )
 
-            tracker.log_artifact(base_path / "transformer.pkl", category="artifact")
             tracker.log_artifact(
-                base_path / "transformations.json", category="artifact"
+                artifacts_path / "transformer.pkl", category="artifact"
             )
-            tracker.log_artifact(base_path / "train_data.csv", category="dataset")
-            tracker.log_artifact(base_path / "cm.png", category="images")
-            tracker.log_artifact(base_path / "pr_curve.png", category="images")
-            tracker.log_artifact(base_path / "roc_curve.png", category="images")
-            tracker.log_artifact(base_path / "shap_summary.png", category="images")
+            tracker.log_artifact(
+                artifacts_path / "transformations.json", category="artifact"
+            )
+            tracker.log_artifact(artifacts_path / "train_data.csv", category="dataset")
+            tracker.log_artifact(artifacts_path / "cm.png", category="images")
+            tracker.log_artifact(artifacts_path / "pr_curve.png", category="images")
+            tracker.log_artifact(artifacts_path / "roc_curve.png", category="images")
+            tracker.log_artifact(artifacts_path / "shap_summary.png", category="images")
 
         logger.info("Training pipeline completed.")
 

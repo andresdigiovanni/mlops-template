@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import requests
 import streamlit as st
 
@@ -110,7 +111,7 @@ drift_type = st.radio(
     "Select drift report to view:", ("Data Drift", "Prediction Drift")
 )
 drift_filename = "data_drift.html" if drift_type == "Data Drift" else "pred_drift.html"
-drift_report_path = Path("../../../.drift_reports") / drift_filename
+drift_report_path = Path(".drift_reports") / drift_filename
 
 if drift_report_path.exists():
     with st.expander(f"📉 {drift_type} Report"):

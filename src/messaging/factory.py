@@ -2,11 +2,11 @@ import logging
 from typing import Any, Dict, Literal, Optional
 
 from src.messaging.base import MqClient
-from src.messaging.clients import RabbitMQClient
+from src.messaging.clients import DummyMQClient, RabbitMQClient
 
 logger = logging.getLogger()
 
-MqType = Literal["rabbitmq"]
+MqType = Literal["dummy", "rabbitmq"]
 
 
 def create_messaging_client(
@@ -16,7 +16,10 @@ def create_messaging_client(
         logger.info(f"Creating messaging client: '{mq_type}'")
         params = params or {}
 
-        if mq_type == "rabbitmq":
+        if mq_type == "dummy":
+            return DummyMQClient(**params)
+
+        elif mq_type == "rabbitmq":
             return RabbitMQClient(**params)
 
         else:

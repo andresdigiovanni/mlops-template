@@ -1,20 +1,27 @@
+artifacts:
+  path: .artifacts
+
 data:
-  path: ../../../data/bank/train.csv
+  path: data/bank/train.csv
   random_state: 42
   target: y
   test_size: 0.2
 
 drift:
   buffer_size: 5
-  path: ../../../.drift_reports
+  path: .drift_reports
 
 experiment_tracker:
   params:
     experiment_name: bank
 
+hydra:
+  run:
+    dir: .
+
 scoring: roc_auc
 
 defaults:
   - experiment_tracker: local
-  - messaging: rabbitmq
+  - messaging: dummy
   - model: logistic_regression

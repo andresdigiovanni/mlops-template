@@ -13,8 +13,9 @@ wheels/
 .env
 
 # Artifacts and logs
+.artifacts/
 .drift_reports/
+.hydra/
 .tracker/
 mlartifacts/
 mlruns/
-outputs/
