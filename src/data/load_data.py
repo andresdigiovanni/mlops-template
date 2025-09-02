@@ -7,7 +7,7 @@ import pandas as pd
 logger = logging.getLogger()
 
 
-def load_data(path: str, target: str = "target") -> Tuple[pd.DataFrame, pd.Series]:
+def load_data(path: str, target: str = None) -> Tuple[pd.DataFrame, pd.Series]:
     """
     Loads dataset from the specified file path and returns features and labels.
     Supports CSV and Parquet files. Assumes the target column is named 'target'.
@@ -35,13 +35,22 @@ def load_data(path: str, target: str = "target") -> Tuple[pd.DataFrame, pd.Serie
         else:
             raise ValueError(f"Unsupported file extension: {ext}")
 
-        if target not in df.columns:
-            raise ValueError("Dataset must contain a 'target' column")
+        if target:
+            if target not in df.columns:
+                raise ValueError("Dataset must contain a 'target' column")
 
-        X = df.drop(columns=target)
-        y = df[target]
+            X = df.drop(columns=target)
+            y = df[target]
 
-        logger.info(f"Dataset loaded successfully with shape: X={X.shape}, y={y.shape}")
+        else:
+            X = df
+            y = None
+
+        logger.info(
+            f"Dataset loaded successfully with shape: X={X.shape}, y={y.shape}"
+            if y
+            else ""
+        )
         return X, y
 
     except Exception as e:
